@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noodp,notranslate,noimageindex" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Lumos</title>
+
+  <style>
+    body {
+      color: #282828;
+      background-color: #f4f4f4;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 18px;
+      padding: 30px;
+    }
+
+    a {
+      color: #0c5ca8;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    .wrapper {
+      display: flex;
+      justify-items: center;
+    }
+
+    .app-dir {
+      color: #fff;
+      font-family: 'Courier New', Courier, monospace;
+      background: linear-gradient(to bottom right, #215284 0%, #2e6a96 100%);
+      border-radius: 5px;
+      padding: 6px 10px;
+    }
+
+    .welcome-blue {
+      min-width: 600px;
+      margin: 0 auto;
+      border-radius: 10px;
+      filter: drop-shadow(-10px -10px 8px rgba(0, 106, 255, 0.1)) drop-shadow(10px 4px 8px rgba(0, 106, 255, 0.1));
+    }
+
+    .welcome-pink {
+      border-radius: 10px;
+      filter: drop-shadow(10px 10px 8px rgba(255, 0, 162, 0.08)) drop-shadow(-10px -4px 8px rgba(255, 0, 191, 0.08));
+    }
+
+    .welcome-main {
+      border-radius: 10px;
+      background-color: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="welcome-blue">
+      <div class="welcome-pink">
+        <div class="welcome-main">
+          <h1>Welcome to Lumos <span class="lumos-version">v<?=$version?>!</span></h1>
+      <p>You can now start building your application.</p>
+      <p><span class="app-dir"><?=$projectDir?></span></p>
+      <p>
+        Don't forget to checkout the <a href="https://lumos.traq.io/docs/<?=$docsVersion?>">documentation</a>.
+      </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

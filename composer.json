@@ -1,0 +1,28 @@
+{
+    "name": "lumosphp/lumos",
+    "description": "The Lumos framework",
+    "type": "library",
+    "require-dev": {
+        "filp/whoops": "^2.14"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Lumos\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jack Polgar",
+            "email": "hello@jp.id.au"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.1",
+        "symfony/http-foundation": "^6.1",
+        "symfony/routing": "^6.1",
+        "symfony/http-kernel": "^6.1",
+        "symfony/dependency-injection": "^6.1"
+    }
+}
