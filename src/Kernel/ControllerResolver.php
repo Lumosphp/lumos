@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Lumos\Kernel;
 
 use InvalidArgumentException;
+use Lumos\DependencyInjection\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use ReflectionMethod;
 use ReflectionParameter;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver as SymfonyControllerResolver;
 
 class ControllerResolver extends SymfonyControllerResolver
@@ -39,15 +39,31 @@ class ControllerResolver extends SymfonyControllerResolver
         $reflection  = new ReflectionMethod($class, '__construct');
 
         foreach ($reflection->getParameters() as $index => $param) {
-            $paramInfo = new ReflectionParameter([$class, '__construct'], $index);
-
             if ($this->container->has($param->getName())) {
-                $arguments[] = $this->container->get($param->getName());
+                $arguments[$param->getName()] = $this->container->get($param->getName());
             } else {
-                throw new InvalidArgumentException(sprintf('Argument "%s" for controller %s was not found in the container', $param->getName(), $class));
+                $paramInfo = new ReflectionParameter([$class, '__construct'], $index);
+
+                // Try to find by type
+                $found = false;
+                foreach ($this->container->getAll() as $value) {
+                    if (\is_object($value) && $paramInfo->getType()->getName() === get_class($value)) {
+                        $found = true;
+                        $arguments[$param->getName()] = $value;
+                        break;
+                    }
+                }
+
+                if (!$found) {
+                    throw new InvalidArgumentException(sprintf('Argument "%s" for controller %s was not found in the container', $param->getName(), $class));
+                }
             }
         }
 
-        return new $class(...$arguments);
+        if (count($arguments)) {
+            return new $class(...$arguments);
+        }
+
+        return new $class();
     }
 }

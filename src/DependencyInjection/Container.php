@@ -10,10 +10,10 @@
 
 declare(strict_types=1);
 
-namespace Lumos;
+namespace Lumos\DependencyInjection;
 
 use InvalidArgumentException;
-use Psr\Container\ContainerInterface;
+use Lumos\DependencyInjection\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface as DependencyInjectionContainerInterface;
 
@@ -53,6 +53,11 @@ class Container implements ContainerInterface, DependencyInjectionContainerInter
         }
 
         return $this->services[$key];
+    }
+
+    public function getAll(): array
+    {
+        return $this->services;
     }
 
     public function setParameter(string $key, mixed $value): static
