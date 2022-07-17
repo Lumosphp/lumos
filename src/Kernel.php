@@ -16,13 +16,13 @@ use Lumos\DependencyInjection\Container;
 use Lumos\DependencyInjection\ContainerAwareInterface;
 use Lumos\DependencyInjection\ContainerInterface;
 use Lumos\DependencyInjection\ServiceInterface;
+use Lumos\Http\Request;
+use Lumos\Http\Response;
 use Lumos\Http\Routing\RouterListener;
 use Lumos\Kernel\ControllerResolver;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
@@ -51,8 +51,10 @@ class Kernel
         $this->startTime = microtime(true);
         $this->startMem = memory_get_usage();
 
+        $this->eventDispatcher = new EventDispatcher();
         $this->container = new Container();
         $this->container->set('config', $config);
+        $this->container->set('eventDispatcher', $this->eventDispatcher);
 
         $this->configureErrorHandler();
         $this->buildServices();
@@ -61,7 +63,6 @@ class Kernel
         $this->argumentResolver = new ArgumentResolver();
 
         $this->urlMatcher = new UrlMatcher($this->config->getRoutes(), new RequestContext());
-        $this->eventDispatcher = new EventDispatcher();
         $this->eventDispatcher->addSubscriber(
             new RouterListener($this->urlMatcher, new RequestStack(), debug: true)
         );
@@ -92,14 +93,17 @@ class Kernel
 
     protected function configureErrorHandler(): void
     {
-        $whoops = new \Whoops\Run;
 
         if ($this->config->isDebug()) {
+            $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
         } else {
-            $whoops->pushHandler(function ($exception) {
-                echo 'An error has occurred while handling the request.';
-            });
+            set_error_handler(
+                function () {
+                    echo 'An error has occurred while handling the request.';
+                    exit;
+                }
+            );
         }
 
         $whoops->register();
