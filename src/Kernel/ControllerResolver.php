@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Lumos\Kernel;
 
 use InvalidArgumentException;
+use Lumos\DependencyInjection\ContainerAwareInterface;
 use Lumos\DependencyInjection\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use ReflectionMethod;
@@ -61,9 +62,15 @@ class ControllerResolver extends SymfonyControllerResolver
         }
 
         if (count($arguments)) {
-            return new $class(...$arguments);
+            $controller = new $class(...$arguments);
+        } else {
+            $controller = new $class();
         }
 
-        return new $class();
+        if ($controller instanceof ContainerAwareInterface) {
+            $controller->setContainer($this->container);
+        }
+
+        return $controller;
     }
 }
