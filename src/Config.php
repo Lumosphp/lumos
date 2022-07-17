@@ -48,7 +48,7 @@ class Config
 
     public function isDebug(): bool
     {
-        return $this->config['debug'] ?? true;
+        return $this->config['debug'] ?? false;
     }
 
     public function has(string $key): bool
