@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Lumos\DependencyInjection;
 
+use Lumos\DependencyInjection\ContainerInterface;
+
 interface ContainerAwareInterface
 {
     public function setContainer(ContainerInterface $container): void;

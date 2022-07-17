@@ -24,7 +24,7 @@ class Container implements ContainerInterface, DependencyInjectionContainerInter
 
     public function initialized(string $key): bool
     {
-        return is_object($this->services[$key]);
+        return isset($this->services[$key]) && is_object($this->services[$key]);
     }
 
     public function set(string $key, mixed $value): static

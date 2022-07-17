@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Lumos;
 
 use Lumos\DependencyInjection\Container;
+use Lumos\DependencyInjection\ContainerAwareInterface;
 use Lumos\DependencyInjection\ContainerInterface;
 use Lumos\DependencyInjection\ServiceInterface;
 use Lumos\Http\Routing\RouterListener;
 use Lumos\Kernel\ControllerResolver;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -108,7 +108,11 @@ class Kernel
     protected function buildServices(): void
     {
         foreach ($this->config->get('services') as $name => $config) {
-            $service = new $config['class'](...$config['options']);
+            if (isset($config['parameters'])) {
+                $service = new $config['class'](...$config['parameters']);
+            } else {
+                $service = new $config['class']();
+            }
 
             if ($service instanceof ContainerAwareInterface) {
                 $service->setContainer($this->container);
