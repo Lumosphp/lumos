@@ -118,9 +118,14 @@ class Kernel
     protected function buildServices(): void
     {
         foreach ($this->config->getServices() as $name => $config) {
-            if (isset($config['parameters'])) {
+            if (!isset($config['class']) && \is_array($config)) {
+                $class = $name;
+                $service = new $name(...$config);
+            } elseif (isset($config['parameters'])) {
+                $class = $config['class'];
                 $service = new $config['class'](...$config['parameters']);
             } else {
+                $class = $config['class'];
                 $service = new $config['class']();
             }
 
@@ -133,9 +138,11 @@ class Kernel
             }
 
             $this->container->set($name, $service);
-            $this->container->setAlias($name, $config['class']);
+            if ($name !== $class) {
+                $this->container->setAlias($name, $class);
+            }
 
-            unset($service);
+            unset($service, $class, $name, $config);
         }
     }
 }
