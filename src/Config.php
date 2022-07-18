@@ -28,9 +28,10 @@ class Config
 
     public function __construct(
         protected RouteCollection $routes = new RouteCollection(),
-        bool $debug = true
-    )
-    {
+        protected array $services = [],
+        protected array $middleware = [],
+        bool $debug = false
+    ) {
         $this->set('debug', $debug);
     }
 
@@ -44,6 +45,30 @@ class Config
     public function getRoutes(): RouteCollection
     {
         return $this->routes;
+    }
+
+    public function setServices(array $services): static
+    {
+        $this->services = $services;
+
+        return $this;
+    }
+
+    public function getServices(): array
+    {
+        return $this->services;
+    }
+
+    public function setMiddleware(array $middleware): static
+    {
+        $this->middleware = $middleware;
+
+        return $this;
+    }
+
+    public function getMiddleware(): array
+    {
+        return $this->middleware;
     }
 
     public function isDebug(): bool
