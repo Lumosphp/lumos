@@ -2,7 +2,7 @@
 /*
  * Lumos Framework
  * Copyright (c) 2022 Jack Polgar
- * https://gitlab.com/nirix/lumos
+ * https://gitlab.com/lumosphp/lumos
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
