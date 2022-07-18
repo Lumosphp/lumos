@@ -17,6 +17,7 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 interface ContainerInterface extends PsrContainerInterface
 {
     public function set(string $key, mixed $value): static;
+    public function setAlias(string $key, string $alias): static;
     public function get(string $key): mixed;
     public function getAll(): array;
     public function has(string $key): bool;

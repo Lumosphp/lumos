@@ -20,6 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface as DependencyInject
 class Container implements ContainerInterface, DependencyInjectionContainerInterface
 {
     protected $services = [];
+    protected $aliases = [];
     protected $params = [];
 
     public function initialized(string $key): bool
@@ -36,7 +37,7 @@ class Container implements ContainerInterface, DependencyInjectionContainerInter
 
     public function has(string $key): bool
     {
-        return isset($this->services[$key]);
+        return isset($this->services[$key]) || isset($this->aliases[$key]);
     }
 
     public function get(string $key, int $invalidBehaviour = self::EXCEPTION_ON_INVALID_REFERENCE): ?object
@@ -52,7 +53,7 @@ class Container implements ContainerInterface, DependencyInjectionContainerInter
             }
         }
 
-        return $this->services[$key];
+        return $this->services[$key] ?? $this->services[$this->aliases[$key]];
     }
 
     public function getAll(): array
@@ -75,5 +76,12 @@ class Container implements ContainerInterface, DependencyInjectionContainerInter
     public function getParameter(string $key): mixed
     {
         return $this->params[$key];
+    }
+
+    public function setAlias(string $serviceName, string $aliasName): static
+    {
+        $this->aliases[$aliasName] = $serviceName;
+
+        return $this;
     }
 }
