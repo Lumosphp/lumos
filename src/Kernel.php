@@ -16,13 +16,14 @@ use Lumos\DependencyInjection\Container;
 use Lumos\DependencyInjection\ContainerAwareInterface;
 use Lumos\DependencyInjection\ContainerInterface;
 use Lumos\DependencyInjection\ServiceInterface;
+use Lumos\Http\EventListener\Middleware;
 use Lumos\Http\Request;
-use Lumos\Http\Response;
 use Lumos\Http\Routing\RouterListener;
 use Lumos\Kernel\ControllerResolver;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
@@ -54,6 +55,7 @@ class Kernel
         $this->eventDispatcher = new EventDispatcher();
         $this->container = new Container();
         $this->container->set('config', $config);
+        $this->container->set('routes', $config->getRoutes());
         $this->container->set('eventDispatcher', $this->eventDispatcher);
 
         $this->configureErrorHandler();
@@ -64,7 +66,11 @@ class Kernel
 
         $this->urlMatcher = new UrlMatcher($this->config->getRoutes(), new RequestContext());
         $this->eventDispatcher->addSubscriber(
-            new RouterListener($this->urlMatcher, new RequestStack(), debug: true)
+            new RouterListener($this->urlMatcher, new RequestStack(), debug: $this->config->isDebug())
+        );
+
+        $this->eventDispatcher->addSubscriber(
+            new Middleware($this->container, $this->config->getRoutes(), $this->config->getMiddleware())
         );
 
         $this->httpKernel = new HttpKernel(

@@ -40,24 +40,15 @@ class ControllerResolver extends SymfonyControllerResolver
         $reflection  = new ReflectionMethod($class, '__construct');
 
         foreach ($reflection->getParameters() as $index => $param) {
+            $paramInfo = new ReflectionParameter([$class, '__construct'], $index);
+
+            // Get by variable name, then by typed class
             if ($this->container->has($param->getName())) {
                 $arguments[$param->getName()] = $this->container->get($param->getName());
+            } elseif($this->container->has($paramInfo->getType()->getName())) {
+                $arguments[$param->getName()] = $this->container->get($paramInfo->getType()->getName());
             } else {
-                $paramInfo = new ReflectionParameter([$class, '__construct'], $index);
-
-                // Try to find by type
-                $found = false;
-                foreach ($this->container->getAll() as $value) {
-                    if (\is_object($value) && $paramInfo->getType()->getName() === get_class($value)) {
-                        $found = true;
-                        $arguments[$param->getName()] = $value;
-                        break;
-                    }
-                }
-
-                if (!$found) {
-                    throw new InvalidArgumentException(sprintf('Argument "%s" for controller %s was not found in the container', $param->getName(), $class));
-                }
+                throw new InvalidArgumentException(sprintf('Argument "%s" for controller %s was not found in the container', $param->getName(), $class));
             }
         }
 
