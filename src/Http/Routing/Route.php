@@ -15,7 +15,7 @@ namespace Lumos\Http\Routing;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class Route extends SymfonyRoute {
-    public static function create(string $path, array|callable $controller, string|array $methods = []): static
+    public static function create(string $path, array|callable $controller, string|array $methods = ['GET']): static
     {
         $methods = \is_array($methods) ? $methods : [$methods];
 
