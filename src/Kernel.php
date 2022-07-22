@@ -49,6 +49,8 @@ class Kernel
     public function __construct(
         protected Config $config
     ) {
+        Request::enableHttpMethodParameterOverride();
+
         $this->startTime = microtime(true);
         $this->startMem = memory_get_usage();
 
