@@ -2,7 +2,7 @@
 /*
  * Lumos Framework
  * Copyright (c) 2022 Jack Polgar
- * https://gitlab.com/lumosphp/lumos
+ * https://github.com/lumosphp/lumos
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class Middleware implements EventSubscriberInterface
+class MiddlewareListener implements EventSubscriberInterface
 {
     public function __construct(
         protected ContainerInterface $container,
@@ -34,6 +34,10 @@ class Middleware implements EventSubscriberInterface
 
         if ($request->attributes->has('_route')) {
             $route = $this->routes->get($request->attributes->get('_route'));
+
+            if (!$route) {
+                return;
+            }
 
             // Get the routes middleware, if any
             $middlewares = $route->getOption('middleware') ?? [];

@@ -2,7 +2,7 @@
 /*
  * Lumos Framework
  * Copyright (c) 2022 Jack Polgar
- * https://gitlab.com/lumosphp/lumos
+ * https://github.com/lumosphp/lumos
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,7 +16,8 @@ use Lumos\DependencyInjection\Container;
 use Lumos\DependencyInjection\ContainerAwareInterface;
 use Lumos\DependencyInjection\ContainerInterface;
 use Lumos\DependencyInjection\ServiceInterface;
-use Lumos\Http\EventListener\Middleware;
+use Lumos\Http\EventListener\ErrorListener;
+use Lumos\Http\EventListener\MiddlewareListener;
 use Lumos\Http\Request;
 use Lumos\Http\Routing\RouterListener;
 use Lumos\Kernel\ControllerResolver;
@@ -71,8 +72,14 @@ class Kernel
             new RouterListener($this->urlMatcher, new RequestStack(), debug: $this->config->isDebug())
         );
 
+        // Error listener, for 404, etc
         $this->eventDispatcher->addSubscriber(
-            new Middleware($this->container, $this->config->getRoutes(), $this->config->getMiddleware())
+            new ErrorListener($this->container, $this->config->get('errorController'))
+        );
+
+        // Handle route middleware
+        $this->eventDispatcher->addSubscriber(
+            new MiddlewareListener($this->container, $this->config->getRoutes(), $this->config->getMiddleware())
         );
 
         $this->httpKernel = new HttpKernel(
